@@ -51,7 +51,7 @@ public class TaxiCompanyDataBase {
     public void addPassenger(Passenger passenger) {
         try {
             Statement statement = connection.createStatement();
-            statement.executeUpdate(String.format("INSERT INTO taxi.passenger (id, first_name, last_name, address) VALUES (null, '%s', '%s', '%s');", passenger.getFirstName(), passenger.getLastName(), passenger.getAddress()));
+            statement.executeUpdate(String.format("INSERT INTO taxi.passenger (id,user_name, first_name, last_name, address) VALUES (null,'%s' ,'%s', '%s', '%s');", passenger.getUserName(),passenger.getFirstName(), passenger.getLastName(), passenger.getAddress()));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
