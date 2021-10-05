@@ -1,4 +1,5 @@
 import enums.VehicleColor;
+import enums.VehicleType;
 
 import java.util.Scanner;
 
@@ -28,6 +29,7 @@ public class Main {
 
                 }
                 case 3: {
+                    scanner.nextLine();
                     System.out.println("enter username(your national code):");
                     if (taxiCompanyDataBase.checkDriver(scanner.nextLine())) {
 //TODO
@@ -66,13 +68,13 @@ public class Main {
                     }
                     break;
                 }
-                case 5:{
+                case 5: {
                     taxiCompanyDataBase.showDriverList();
                     showMainMeu();
                     choose = scanner.nextInt();
                     break;
                 }
-                case 6:{
+                case 6: {
                     taxiCompanyDataBase.showPassengerList();
                     showMainMeu();
                     choose = scanner.nextInt();
@@ -95,31 +97,37 @@ public class Main {
     public static void addGroupOfDriver(Scanner scanner, TaxiCompanyDataBase taxiCompanyDataBase) {
         System.out.println("how many driver you want to register");
         int n = scanner.nextInt();
+        scanner.nextLine();
         for (int i = 0; i < n; i++) {
             Driver driver = new Driver();
             Vehicle vehicle = new Vehicle();
             registerDriver(scanner, driver, taxiCompanyDataBase);
-            System.out.println("enter driver vehicle information:\nname:");
-            vehicle.setName(scanner.nextLine());
-            System.out.println("tag:");
-            vehicle.setTag(scanner.nextLine());
-            System.out.println("choose color:\n1)blue\n2)white\n3)black");
-            int chooseColor = scanner.nextInt();
-            if (chooseColor == 1) {
-                vehicle.setColor(VehicleColor.BLUE.getVehicleColor());
-            } else if (chooseColor == 2) {
-                vehicle.setColor(VehicleColor.WHITE.getVehicleColor());
-            } else if (chooseColor == 3) {
-                vehicle.setColor(VehicleColor.BLACK.getVehicleColor());
+            scanner.nextLine();
+            if (!taxiCompanyDataBase.checkDriver(driver.getNationalCode())) {
+                System.out.println("enter driver vehicle information:\nname:");
+                vehicle.setName(scanner.nextLine());
+                System.out.println("tag:");
+                vehicle.setTag(scanner.nextLine());
+                System.out.println("choose color:\n1)blue\n2)white\n3)black");
+                int chooseColor = scanner.nextInt();
+                if (chooseColor == 1) {
+                    vehicle.setColor(VehicleColor.BLUE.getVehicleColor());
+                } else if (chooseColor == 2) {
+                    vehicle.setColor(VehicleColor.WHITE.getVehicleColor());
+                } else if (chooseColor == 3) {
+                    vehicle.setColor(VehicleColor.BLACK.getVehicleColor());
+                }
+                System.out.println("choose vehicle type:");
+                System.out.println("1)car");
+                vehicle.setVehicleType(VehicleType.CAR.getVehicleType());
+                taxiCompanyDataBase.addVehicle(vehicle, driver.getNationalCode());
             }
-            System.out.println("vehicle type:");
-            vehicle.setVehicleType(scanner.nextLine());
-            taxiCompanyDataBase.addVehicle(vehicle, driver.getNationalCode());
         }
     }
 
     public static void addPassenger(Scanner scanner, TaxiCompanyDataBase taxiCompanyDataBase) {
         Passenger passenger = new Passenger();
+        scanner.nextLine();
         System.out.println("enter passenger information:\nuser name:");
         passenger.setUserName(scanner.nextLine());
         System.out.println("first name:");
@@ -138,13 +146,10 @@ public class Main {
         System.out.println("last name:");
         driver.setLastName(scanner.nextLine());
         System.out.println("username(it is your national code):");
-        driver.setLastName(scanner.nextLine());
+        driver.setNationalCode(scanner.nextLine());
         System.out.println("age:");
         driver.setAge(scanner.nextInt());
         taxiCompanyDataBase.addDriver(driver);
     }
 
-    public static void passengerSignUpOrLogin() {
-
-    }
 }

@@ -10,6 +10,8 @@ public class TaxiCompanyDataBase {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+
+
         try {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/taxi", "root", "13811383");
         } catch (SQLException throwables) {
