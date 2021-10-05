@@ -1,6 +1,6 @@
 package enums;
 
-public enum vehicleType {
+public enum VehicleType {
     CAR("car"),
     MOTORCYCLE("motorcycle"),
     VAN("van");
@@ -10,7 +10,7 @@ public enum vehicleType {
         return vehicleType;
     }
 
-    vehicleType(String vehicleType) {
+    VehicleType(String vehicleType) {
         this.vehicleType = vehicleType;
     }
 }
