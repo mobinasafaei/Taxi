@@ -58,6 +58,8 @@ public class TaxiCompanyDataBase {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
+        }else {
+            System.out.println("user name already exist ");
         }
     }
 
