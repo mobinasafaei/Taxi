@@ -96,7 +96,7 @@ public class TaxiCompanyDataBase {
             while (resultSet.next()) {
                 System.out.print(resultSet.getInt("id") + "\t");
                 System.out.print(resultSet.getString("first_name") + "\t");
-                System.out.println(resultSet.getString("last_name") + "\t");
+                System.out.print(resultSet.getString("last_name") + "\t");
                 System.out.println(resultSet.getString("national_code"));
             }
         } catch (SQLException throwables) {
