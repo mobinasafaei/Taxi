@@ -20,10 +20,10 @@ public class TaxiCompanyDataBase {
     }
 
     public void addDriver(Driver driver) {
-        if (!checkDriver(driver.getNationalCode())) {
+        if (!checkDriver(driver.getUserName())) {
             try {
                 Statement statement = connection.createStatement();
-                statement.executeUpdate(String.format("INSERT INTO taxi.driver (id, first_name, last_name, national_code, age) VALUES (null, '%s', '%s', '%s', '%s');", driver.getFirstName(), driver.getLastName(), driver.getNationalCode(), driver.getAge()));
+                statement.executeUpdate(String.format("INSERT INTO taxi.driver (id, user_name,first_name, last_name, age) VALUES (null, '%s', '%s', '%s', '%s');", driver.getUserName(), driver.getFirstName(), driver.getLastName(), driver.getAge()));
 
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -45,26 +45,28 @@ public class TaxiCompanyDataBase {
             } else {
                 System.out.println("username is wrong or driver not exist you must register first.");
             }
-        }else {
+        } else {
             System.out.println("vehicle is already exist!");
         }
     }
 
     public void addPassenger(Passenger passenger) {
-        try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(String.format("INSERT INTO taxi.passenger (id,user_name, first_name, last_name, address) VALUES (null,'%s' ,'%s', '%s', '%s');", passenger.getUserName(),passenger.getFirstName(), passenger.getLastName(), passenger.getAddress()));
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        if (!checkPassenger(passenger.getUserName())) {
+            try {
+                Statement statement = connection.createStatement();
+                statement.executeUpdate(String.format("INSERT INTO taxi.passenger (id,user_name, first_name, last_name, address) VALUES (null,'%s' ,'%s', '%s', '%s');", passenger.getUserName(), passenger.getFirstName(), passenger.getLastName(), passenger.getAddress()));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
     }
 
-    public boolean checkDriver(String nationalCode) {
+    public boolean checkDriver(String userName) {
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT national_code FROM taxi.driver");
+            ResultSet resultSet = statement.executeQuery("SELECT user_name FROM taxi.driver");
             while (resultSet.next()) {
-                if (nationalCode.equals(resultSet.getString("national_code"))) {
+                if (userName.equals(resultSet.getString("user_name"))){
                     return true;
                 }
             }
@@ -77,9 +79,9 @@ public class TaxiCompanyDataBase {
     public boolean checkPassenger(String userName) {
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT national_code from taxi.passenger");
+            ResultSet resultSet = statement.executeQuery("SELECT user_name from taxi.passenger");
             while (resultSet.next()) {
-                if (userName.equals(resultSet.getString("national_code"))) {
+                if (userName.equals(resultSet.getString("user_name"))) {
                     return true;
                 }
             }
@@ -95,9 +97,10 @@ public class TaxiCompanyDataBase {
             ResultSet resultSet = statement.executeQuery("select * from taxi.driver");
             while (resultSet.next()) {
                 System.out.print(resultSet.getInt("id") + "\t");
+                System.out.print(resultSet.getString("user_name") + "\t");
                 System.out.print(resultSet.getString("first_name") + "\t");
-                System.out.print(resultSet.getString("last_name") + "\t");
-                System.out.println(resultSet.getString("national_code"));
+                System.out.println(resultSet.getString("last_name"));
+
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -110,8 +113,9 @@ public class TaxiCompanyDataBase {
             ResultSet resultSet = statement.executeQuery("select * from taxi.passenger");
             while (resultSet.next()) {
                 System.out.print(resultSet.getInt("id") + "\t");
+                System.out.print(resultSet.getString("user_name") + "\t");
                 System.out.print(resultSet.getString("first_name") + "\t");
-                System.out.println(resultSet.getString("last_name") + "\t");
+                System.out.print(resultSet.getString("last_name") + "\t");
                 System.out.println(resultSet.getString("address"));
             }
         } catch (SQLException throwables) {
@@ -134,11 +138,11 @@ public class TaxiCompanyDataBase {
         return false;
     }
 
-    private int findDriverId(String nationalCode) {
+    private int findDriverId(String userName) {
         int id = 0;
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(String.format("SELECT id FROM taxi.driver where national_code='%s'", nationalCode));
+            ResultSet resultSet = statement.executeQuery(String.format("SELECT id FROM taxi.driver where user_name='%s'", userName));
             while (resultSet.next()) {
                 id = resultSet.getInt("id");
             }

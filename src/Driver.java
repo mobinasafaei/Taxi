@@ -1,7 +1,7 @@
 public class Driver {
     private String firstName;
     private String lastName;
-    private String nationalCode;
+    private String userName;
     private int age;
 
     public String getFirstName() {
@@ -19,12 +19,13 @@ public class Driver {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    public String getNationalCode() {
-        return nationalCode;
+
+    public String getUserName() {
+        return userName;
     }
 
-    public void setNationalCode(String nationalCode) {
-        this.nationalCode = nationalCode;
+    public void setUserName(String nationalCode) {
+        this.userName = nationalCode;
     }
 
     public int getAge() {

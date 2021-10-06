@@ -20,7 +20,7 @@ public class Main {
                         Vehicle vehicle = new Vehicle();
                         registerDriver(scanner, driver, taxiCompanyDataBase);
                         scanner.nextLine();
-                        if (!taxiCompanyDataBase.checkDriver(driver.getNationalCode())) {
+                        if (taxiCompanyDataBase.checkDriver(driver.getUserName())) {
                             System.out.println("enter driver vehicle information:\nname:");
                             vehicle.setName(scanner.nextLine());
                             System.out.println("tag:");
@@ -36,9 +36,12 @@ public class Main {
                             }
                             System.out.println("choose vehicle type:");
                             System.out.println("1)car");
-                            vehicle.setVehicleType(VehicleType.CAR.getVehicleType());
-                            taxiCompanyDataBase.addVehicle(vehicle, driver.getNationalCode());
-                        }}
+                            if (scanner.nextInt() == 1) {
+                                vehicle.setVehicleType(VehicleType.CAR.getVehicleType());
+                            }
+                            taxiCompanyDataBase.addVehicle(vehicle, driver.getUserName());
+                        }
+                    }
                     showMainMeu();
                     choose = scanner.nextInt();
                     break;
@@ -60,7 +63,7 @@ public class Main {
                     if (taxiCompanyDataBase.checkDriver(scanner.nextLine())) {
                         System.out.println("you login.");
                         System.out.println("press one to exit");
-                        if(scanner.nextInt()==1){
+                        if (scanner.nextInt() == 1) {
                             showMainMeu();
                             choose = scanner.nextInt();
                             break;
@@ -86,7 +89,7 @@ public class Main {
                     if (taxiCompanyDataBase.checkDriver(scanner.nextLine())) {
                         System.out.println("you login.");
                         System.out.println("press one to exit");
-                        if(scanner.nextInt()==1){
+                        if (scanner.nextInt() == 1) {
                             showMainMeu();
                             choose = scanner.nextInt();
                             break;
@@ -107,12 +110,14 @@ public class Main {
                     break;
                 }
                 case 5: {
+                    System.out.println("id\tuser name\tfirst name\tlast name\taddress");
                     taxiCompanyDataBase.showDriverList();
                     showMainMeu();
                     choose = scanner.nextInt();
                     break;
                 }
                 case 6: {
+                    System.out.println("id\tuser name\tfirst name\tlast name");
                     taxiCompanyDataBase.showPassengerList();
                     showMainMeu();
                     choose = scanner.nextInt();
@@ -153,9 +158,10 @@ public class Main {
         System.out.println("last name:");
         driver.setLastName(scanner.nextLine());
         System.out.println("username(it is your national code):");
-        driver.setNationalCode(scanner.nextLine());
+        driver.setUserName(scanner.nextLine());
         System.out.println("age:");
-        driver.setAge(scanner.nextInt());
+        int age=scanner.nextInt();
+        driver.setAge(age);
         taxiCompanyDataBase.addDriver(driver);
     }
 
