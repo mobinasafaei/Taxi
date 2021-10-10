@@ -1,3 +1,5 @@
+package organization;
+
 public class Passenger {
     private String firstName;
     private String lastName;
