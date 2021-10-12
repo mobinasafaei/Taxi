@@ -1,12 +1,12 @@
-package databases;
+package databasesAccess;
 
-import organization.Passenger;
+import model.Passenger;
 
 import java.sql.*;
 
-public class PassengerDatabase {
+public class PassengerDatabaseAccess {
     private Connection connection;
-    public PassengerDatabase(){
+    public PassengerDatabaseAccess(){
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {

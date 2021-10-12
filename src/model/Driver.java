@@ -1,4 +1,4 @@
-package organization;
+package model;
 
 public class Driver {
     private String firstName;

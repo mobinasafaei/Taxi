@@ -1,21 +1,21 @@
-import databases.DriverDatabase;
-import databases.PassengerDatabase;
-import databases.VehicleDatabase;
+import databasesAccess.DriverDatabaseAccess;
+import databasesAccess.PassengerDatabaseAccess;
+import databasesAccess.VehicleDatabaseAccess;
 import enums.VehicleColor;
 import enums.VehicleType;
-import organization.Driver;
-import organization.Passenger;
-import organization.Vehicle;
+import model.Driver;
+import model.Passenger;
+import model.Vehicle;
 
 import java.util.Scanner;
 
-import static databases.DriverDatabase.checkDriver;
+import static databasesAccess.DriverDatabaseAccess.checkDriver;
 
 public class Main {
     public static void main(String[] args) {
-        DriverDatabase driverDatabase = new DriverDatabase();
-        VehicleDatabase vehicleDatabase = new VehicleDatabase();
-        PassengerDatabase passengerDatabase = new PassengerDatabase();
+        DriverDatabaseAccess driverDatabaseAccess = new DriverDatabaseAccess();
+        VehicleDatabaseAccess vehicleDatabaseAccess = new VehicleDatabaseAccess();
+        PassengerDatabaseAccess passengerDatabaseAccess = new PassengerDatabaseAccess();
         Scanner scanner = new Scanner(System.in);
         showMainMeu();
         int choose = scanner.nextInt();
@@ -28,7 +28,7 @@ public class Main {
                     for (int i = 0; i < n; i++) {
                         Driver driver = new Driver();
                         Vehicle vehicle = new Vehicle();
-                        boolean exist=registerDriver(driver, driverDatabase);
+                        boolean exist=registerDriver(driver, driverDatabaseAccess);
                         if (exist) {
                             System.out.println("enter driver vehicle information:\nname:");
                             vehicle.setName(scanner.nextLine());
@@ -48,7 +48,7 @@ public class Main {
                             if (scanner.nextInt() == 1) {
                                 vehicle.setVehicleType(VehicleType.CAR.getVehicleType());
                             }
-                            vehicleDatabase.addVehicle(vehicle, driver.getUserName());
+                            vehicleDatabaseAccess.addVehicle(vehicle, driver.getUserName());
                         }
                     }
                     showMainMeu();
@@ -59,7 +59,7 @@ public class Main {
                     System.out.println("how many passenger you want to register");
                     int n = scanner.nextInt();
                     for (int i = 0; i < n; i++) {
-                        addPassenger(passengerDatabase);
+                        addPassenger(passengerDatabaseAccess);
                     }
                     showMainMeu();
                     choose = scanner.nextInt();
@@ -82,7 +82,7 @@ public class Main {
                         int n = scanner.nextInt();
                         if (n == 1) {
                             Driver driver = new Driver();
-                            registerDriver(driver, driverDatabase);
+                            registerDriver(driver, driverDatabaseAccess);
                             showMainMeu();
                             choose = scanner.nextInt();
                             break;
@@ -107,7 +107,7 @@ public class Main {
                         System.out.println("1)register\n2)exit");
                         int n = scanner.nextInt();
                         if (n == 1) {
-                            addPassenger(passengerDatabase);
+                            addPassenger(passengerDatabaseAccess);
                             showMainMeu();
                             choose = scanner.nextInt();
                         } else if (n == 2) {
@@ -120,14 +120,14 @@ public class Main {
                 }
                 case 5: {
                     System.out.println("id\tuser name\tfirst name\tlast name\taddress");
-                    driverDatabase.showDriverList();
+                    driverDatabaseAccess.showDriverList();
                     showMainMeu();
                     choose = scanner.nextInt();
                     break;
                 }
                 case 6: {
                     System.out.println("id\tuser name\tfirst name\tlast name");
-                    passengerDatabase.showPassengerList();
+                    passengerDatabaseAccess.showPassengerList();
                     showMainMeu();
                     choose = scanner.nextInt();
                     break;
@@ -146,7 +146,7 @@ public class Main {
                 "6)show a list of passengers");
     }
 
-    public static void addPassenger(PassengerDatabase passengerDatabase) {
+    public static void addPassenger(PassengerDatabaseAccess passengerDatabaseAccess) {
         Scanner scanner = new Scanner(System.in);
         Passenger passenger = new Passenger();
         scanner.nextLine();
@@ -158,10 +158,10 @@ public class Main {
         passenger.setLastName(scanner.nextLine());
         System.out.println("address:");
         passenger.setAddress(scanner.nextLine());
-        passengerDatabase.addPassenger(passenger);
+        passengerDatabaseAccess.addPassenger(passenger);
     }
 
-    public static boolean registerDriver(Driver driver, DriverDatabase driverDatabase) {
+    public static boolean registerDriver(Driver driver, DriverDatabaseAccess driverDatabaseAccess) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter driver information:\n" + "first name:");
         driver.setFirstName(scanner.nextLine());
@@ -173,7 +173,7 @@ public class Main {
         int age = scanner.nextInt();
         driver.setAge(age);
         if (!checkDriver(driver.getUserName())) {
-            driverDatabase.addDriver(driver);
+            driverDatabaseAccess.addDriver(driver);
             System.out.println("driver registered");
             return true;
         } else {

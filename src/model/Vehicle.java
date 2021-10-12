@@ -1,4 +1,4 @@
-package organization;
+package model;
 
 public class Vehicle{
     private String name;

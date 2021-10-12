@@ -1,4 +1,4 @@
-package organization;
+package model;
 
 public class Passenger {
     private String firstName;
