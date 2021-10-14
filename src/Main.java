@@ -1,21 +1,26 @@
 import databasesAccess.DriverDatabaseAccess;
 import databasesAccess.PassengerDatabaseAccess;
+import databasesAccess.TripDatabaseAccess;
 import databasesAccess.VehicleDatabaseAccess;
+import enums.DriverStatus;
 import enums.VehicleColor;
 import enums.VehicleType;
 import model.Driver;
 import model.Passenger;
+import model.Trip;
 import model.Vehicle;
 
 import java.util.Scanner;
 
 import static databasesAccess.DriverDatabaseAccess.checkDriver;
+import static databasesAccess.PassengerDatabaseAccess.checkPassenger;
 
 public class Main {
     public static void main(String[] args) {
         DriverDatabaseAccess driverDatabaseAccess = new DriverDatabaseAccess();
         VehicleDatabaseAccess vehicleDatabaseAccess = new VehicleDatabaseAccess();
         PassengerDatabaseAccess passengerDatabaseAccess = new PassengerDatabaseAccess();
+        TripDatabaseAccess tripDatabaseAccess = new TripDatabaseAccess();
         Scanner scanner = new Scanner(System.in);
         showMainMeu();
         int choose = scanner.nextInt();
@@ -28,7 +33,7 @@ public class Main {
                     for (int i = 0; i < n; i++) {
                         Driver driver = new Driver();
                         Vehicle vehicle = new Vehicle();
-                        boolean exist=registerDriver(driver, driverDatabaseAccess);
+                        boolean exist = registerDriver(driver, driverDatabaseAccess);
                         if (exist) {
                             System.out.println("enter driver vehicle information:\nname:");
                             vehicle.setName(scanner.nextLine());
@@ -59,25 +64,32 @@ public class Main {
                     System.out.println("how many passenger you want to register");
                     int n = scanner.nextInt();
                     for (int i = 0; i < n; i++) {
-                        addPassenger(passengerDatabaseAccess);
+                        Passenger passenger = new Passenger();
+                        scanner.nextLine();
+                        System.out.println("enter passenger information:\nuser name:");
+                        passenger.setUserName(scanner.nextLine());
+                        System.out.println("first name:");
+                        passenger.setFirstName(scanner.nextLine());
+                        System.out.println("last name:");
+                        passenger.setLastName(scanner.nextLine());
+                        System.out.println("address:");
+                        passenger.setAddress(scanner.nextLine());
+                        passengerDatabaseAccess.addPassenger(passenger);
                     }
                     showMainMeu();
                     choose = scanner.nextInt();
                     break;
-
                 }
                 case 3: {
                     scanner.nextLine();
                     System.out.println("enter username(your national code):");
-                    if (checkDriver(scanner.nextLine())) {
+                    String userName = scanner.nextLine();
+                    if (checkDriver(userName)) {
                         System.out.println("you login.");
-                        System.out.println("press one to exit");
-                        if (scanner.nextInt() == 1) {
-                            showMainMeu();
-                            choose = scanner.nextInt();
-                            break;
-                        }
+                        //TODO
+
                     } else {
+                        System.out.println("username not exist!");
                         System.out.println("1)register\n2)exit");
                         int n = scanner.nextInt();
                         if (n == 1) {
@@ -94,20 +106,53 @@ public class Main {
                     }
                 }
                 case 4: {
+                    scanner.nextLine();
                     System.out.println("enter username(your national code):");
-                    if (checkDriver(scanner.nextLine())) {
+                    String userName = scanner.nextLine();
+                    if (checkPassenger(userName)) {
                         System.out.println("you login.");
-                        System.out.println("press one to exit");
-                        if (scanner.nextInt() == 1) {
+                        System.out.println("1)Travel request(pay by cash)\n2)Travel request(pay by account balance)\n3)increase balance");
+                        int choose1 = scanner.nextInt();
+                        if (choose1 == 1) {
+                            scanner.nextLine();
+                            System.out.println("enter your origin according this pattern:600,900");
+                            Trip trip = new Trip();
+                            trip.setOrigin(scanner.nextLine());
+                            System.out.println("enter your destination according this pattern:600,900");
+                            trip.setDestination(scanner.nextLine());
+                            trip.calculateCost();
+                            tripDatabaseAccess.addTrip(trip);
+                            new FindClosestDriver(trip);
+                            showMainMeu();
+                            choose = scanner.nextInt();
+                            break;
+                        } else if (choose1 == 2) {
+                            //TODO
+                        } else if (choose1 == 3) {
+                            System.out.println("how much balance you wanna increase?");
+                            double increaseBalance = scanner.nextDouble();
+                            passengerDatabaseAccess.increaseBalance(userName, increaseBalance);
+                            System.out.println("your balance increased");
                             showMainMeu();
                             choose = scanner.nextInt();
                             break;
                         }
+
                     } else {
                         System.out.println("1)register\n2)exit");
                         int n = scanner.nextInt();
                         if (n == 1) {
-                            addPassenger(passengerDatabaseAccess);
+                            Passenger passenger = new Passenger();
+                            scanner.nextLine();
+                            System.out.println("enter passenger information:\nuser name:");
+                            passenger.setUserName(scanner.nextLine());
+                            System.out.println("first name:");
+                            passenger.setFirstName(scanner.nextLine());
+                            System.out.println("last name:");
+                            passenger.setLastName(scanner.nextLine());
+                            System.out.println("address:");
+                            passenger.setAddress(scanner.nextLine());
+                            passengerDatabaseAccess.addPassenger(passenger);
                             showMainMeu();
                             choose = scanner.nextInt();
                         } else if (n == 2) {
@@ -146,21 +191,6 @@ public class Main {
                 "6)show a list of passengers");
     }
 
-    public static void addPassenger(PassengerDatabaseAccess passengerDatabaseAccess) {
-        Scanner scanner = new Scanner(System.in);
-        Passenger passenger = new Passenger();
-        scanner.nextLine();
-        System.out.println("enter passenger information:\nuser name:");
-        passenger.setUserName(scanner.nextLine());
-        System.out.println("first name:");
-        passenger.setFirstName(scanner.nextLine());
-        System.out.println("last name:");
-        passenger.setLastName(scanner.nextLine());
-        System.out.println("address:");
-        passenger.setAddress(scanner.nextLine());
-        passengerDatabaseAccess.addPassenger(passenger);
-    }
-
     public static boolean registerDriver(Driver driver, DriverDatabaseAccess driverDatabaseAccess) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter driver information:\n" + "first name:");
@@ -172,6 +202,10 @@ public class Main {
         System.out.println("age:");
         int age = scanner.nextInt();
         driver.setAge(age);
+        driver.setStatus(DriverStatus.WAIT_FOR_TRIP.getDriverStatus());
+        scanner.nextLine();
+        System.out.println("enter your location according this pattern:600,900");
+        driver.setLocation(scanner.nextLine());
         if (!checkDriver(driver.getUserName())) {
             driverDatabaseAccess.addDriver(driver);
             System.out.println("driver registered");

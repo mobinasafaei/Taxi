@@ -5,6 +5,7 @@ public class Passenger {
     private String lastName;
     private String address;
     private String userName;
+    private Double balance;
 
     public String getFirstName() {
         return firstName;
@@ -36,5 +37,13 @@ public class Passenger {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
     }
 }

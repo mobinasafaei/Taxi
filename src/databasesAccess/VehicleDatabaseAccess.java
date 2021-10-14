@@ -5,12 +5,13 @@ import model.Vehicle;
 import java.sql.*;
 
 import static databasesAccess.DriverDatabaseAccess.checkDriver;
-import static databasesAccess.DriverDatabaseAccess.findDriverId;
+import static databasesAccess.DriverDatabaseAccess.findDriverIdByUsername;
 
 public class VehicleDatabaseAccess {
     private Connection connection;
-    DriverDatabaseAccess driverDatabaseAccess =new DriverDatabaseAccess();
-    public VehicleDatabaseAccess(){
+    DriverDatabaseAccess driverDatabaseAccess = new DriverDatabaseAccess();
+
+    public VehicleDatabaseAccess() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -22,6 +23,7 @@ public class VehicleDatabaseAccess {
             throwables.printStackTrace();
         }
     }
+
     public void addVehicle(Vehicle vehicle, String nationalCode) {
         if (!checkVehicle(vehicle.getTag())) {
             if (checkDriver(nationalCode)) {
@@ -30,7 +32,7 @@ public class VehicleDatabaseAccess {
                     statement.executeUpdate(String.format("INSERT INTO taxi.vehicle " +
                                     "(id,name, tag, color, vehicle_type, driverid) VALUES (null,'%s', '%s', '%s', '%s', '%s');",
                             vehicle.getName(), vehicle.getTag(), vehicle.getColor(), vehicle.getVehicleType(),
-                            findDriverId(nationalCode)));
+                            findDriverIdByUsername(nationalCode)));
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
@@ -41,6 +43,7 @@ public class VehicleDatabaseAccess {
             System.out.println("vehicle is already exist!");
         }
     }
+
     public boolean checkVehicle(String tag) {
         try {
             Statement statement = connection.createStatement();
