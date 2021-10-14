@@ -2,9 +2,7 @@ import databasesAccess.DriverDatabaseAccess;
 import databasesAccess.PassengerDatabaseAccess;
 import databasesAccess.TripDatabaseAccess;
 import databasesAccess.VehicleDatabaseAccess;
-import enums.DriverStatus;
-import enums.VehicleColor;
-import enums.VehicleType;
+import enums.*;
 import model.Driver;
 import model.Passenger;
 import model.Trip;
@@ -23,8 +21,9 @@ public class Main {
         TripDatabaseAccess tripDatabaseAccess = new TripDatabaseAccess();
         Scanner scanner = new Scanner(System.in);
         showMainMeu();
+        boolean exit = true;
         int choose = scanner.nextInt();
-        while (true) {
+        while (exit) {
             switch (choose) {
                 case 1: {
                     System.out.println("how many driver you want to register");
@@ -114,20 +113,99 @@ public class Main {
                         System.out.println("1)Travel request(pay by cash)\n2)Travel request(pay by account balance)\n3)increase balance");
                         int choose1 = scanner.nextInt();
                         if (choose1 == 1) {
-                            scanner.nextLine();
-                            System.out.println("enter your origin according this pattern:600,900");
-                            Trip trip = new Trip();
-                            trip.setOrigin(scanner.nextLine());
-                            System.out.println("enter your destination according this pattern:600,900");
-                            trip.setDestination(scanner.nextLine());
-                            trip.calculateCost();
-                            tripDatabaseAccess.addTrip(trip);
-                            new FindClosestDriver(trip);
-                            showMainMeu();
-                            choose = scanner.nextInt();
-                            break;
+                            if (passengerDatabaseAccess.checkPassengerStatus(userName)) {
+                                scanner.nextLine();
+                                System.out.println("enter your origin according this pattern:600,900");
+                                Trip trip = new Trip();
+                                trip.setOrigin(scanner.nextLine());
+                                System.out.println("enter your destination according this pattern:600,900");
+                                trip.setDestination(scanner.nextLine());
+                                trip.calculateCost();
+                                FindClosestDriver findClosestDriver = new FindClosestDriver(trip);
+                                if (findClosestDriver.isDriverFound()) {
+                                    trip.setTripStatus(TripStatus.ONGOING.getTripStatus());
+                                    tripDatabaseAccess.addTrip(trip);
+                                    tripDatabaseAccess.paymentWay(PaymentWay.PAY_BY_CASH.getPaymentWay(), trip);
+                                    int driverId = findClosestDriver.getDriverId();
+                                    tripDatabaseAccess.addDriverIdToTrip(trip, driverId);
+                                    int passengerId = passengerDatabaseAccess.getPassengerIdByUsername(userName);
+                                    tripDatabaseAccess.addPassengerIdToTrip(trip, passengerId);
+                                    passengerDatabaseAccess.changePassengerStatusToOnTrip(userName);
+                                    driverDatabaseAccess.changeDriverStatusToOnTrip(driverId);
+                                } else {
+                                    System.out.println("sorry we don't have driver now:( ");
+                                }
+                                System.out.println("1)increase balance\n2)exit");
+                                int choose3 = scanner.nextInt();
+                                if (choose3 == 1) {
+                                    System.out.println("how much balance you wanna increase?");
+                                    double increaseBalance = scanner.nextDouble();
+                                    passengerDatabaseAccess.increaseBalance(userName, increaseBalance);
+                                    System.out.println("your balance increased");
+                                    showMainMeu();
+                                    choose = scanner.nextInt();
+                                    break;
+                                } else if (choose3 == 2) {
+                                    System.out.println("you exit.");
+                                    showMainMeu();
+                                    choose = scanner.nextInt();
+                                    break;
+                                }
+                            } else {
+                                System.out.println("you are on trip!");
+                                showMainMeu();
+                                choose = scanner.nextInt();
+                                break;
+                            }
                         } else if (choose1 == 2) {
-                            //TODO
+                            if (passengerDatabaseAccess.checkPassengerStatus(userName)) {
+                                scanner.nextLine();
+                                System.out.println("enter your origin according this pattern:600,900");
+                                Trip trip = new Trip();
+                                trip.setOrigin(scanner.nextLine());
+                                System.out.println("enter your destination according this pattern:600,900");
+                                trip.setDestination(scanner.nextLine());
+                                trip.calculateCost();
+                                if (passengerDatabaseAccess.getBBalanceByUsername(userName) >= trip.getCost()) {
+                                    FindClosestDriver findClosestDriver = new FindClosestDriver(trip);
+                                    if (findClosestDriver.isDriverFound()) {
+                                        trip.setTripStatus(TripStatus.ONGOING.getTripStatus());
+                                        tripDatabaseAccess.addTrip(trip);
+                                        tripDatabaseAccess.paymentWay(PaymentWay.PAY_BY_ACCOUNT_BALANCE.getPaymentWay(), trip);
+                                        int driverId = findClosestDriver.getDriverId();
+                                        tripDatabaseAccess.addDriverIdToTrip(trip, driverId);
+                                        int passengerId = passengerDatabaseAccess.getPassengerIdByUsername(userName);
+                                        tripDatabaseAccess.addPassengerIdToTrip(trip, passengerId);
+                                        passengerDatabaseAccess.changePassengerStatusToOnTrip(userName);
+                                        driverDatabaseAccess.changeDriverStatusToOnTrip(driverId);
+                                    } else {
+                                        System.out.println("sorry we don't have driver now:( ");
+                                    }
+                                }else {
+                                    System.out.println("you should increase your balance:((((");
+                                }
+                                System.out.println("1)increase balance\n2)exit");
+                                int choose3 = scanner.nextInt();
+                                if (choose3 == 1) {
+                                    System.out.println("how much balance you wanna increase?");
+                                    double increaseBalance = scanner.nextDouble();
+                                    passengerDatabaseAccess.increaseBalance(userName, increaseBalance);
+                                    System.out.println("your balance increased");
+                                    showMainMeu();
+                                    choose = scanner.nextInt();
+                                    break;
+                                } else if (choose3 == 2) {
+                                    System.out.println("you exit.");
+                                    showMainMeu();
+                                    choose = scanner.nextInt();
+                                    break;
+                                }
+                            } else {
+                                System.out.println("you are on trip!");
+                                showMainMeu();
+                                choose = scanner.nextInt();
+                                break;
+                            }
                         } else if (choose1 == 3) {
                             System.out.println("how much balance you wanna increase?");
                             double increaseBalance = scanner.nextDouble();
@@ -164,17 +242,28 @@ public class Main {
                     break;
                 }
                 case 5: {
+                    tripDatabaseAccess.showTrips();
+                    showMainMeu();
+                    choose = scanner.nextInt();
+                    break;
+                }
+                case 6: {
                     System.out.println("id\tuser name\tfirst name\tlast name\taddress");
                     driverDatabaseAccess.showDriverList();
                     showMainMeu();
                     choose = scanner.nextInt();
                     break;
                 }
-                case 6: {
+                case 7: {
                     System.out.println("id\tuser name\tfirst name\tlast name");
                     passengerDatabaseAccess.showPassengerList();
                     showMainMeu();
                     choose = scanner.nextInt();
+                    break;
+                }
+                case 8: {
+                    System.out.println("you exit!");
+                    exit = false;
                     break;
                 }
             }
@@ -187,8 +276,10 @@ public class Main {
                 "2)add a group of passengers\n" +
                 "3)driver sign up or login\n" +
                 "4)passenger sign up or login\n" +
-                "5)show a list of drivers\n" +
-                "6)show a list of passengers");
+                "5)show ongoing trips\n" +
+                "6)show a list of drivers\n" +
+                "7)show a list of passengers\n" +
+                "8)exit");
     }
 
     public static boolean registerDriver(Driver driver, DriverDatabaseAccess driverDatabaseAccess) {
@@ -216,4 +307,7 @@ public class Main {
         }
     }
 
+    public static void increaseBalanceOrExit() {
+
+    }
 }

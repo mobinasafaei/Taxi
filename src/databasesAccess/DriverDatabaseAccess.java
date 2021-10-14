@@ -1,6 +1,7 @@
 package databasesAccess;
 
 import enums.DriverStatus;
+import enums.PassengerStatus;
 import model.Driver;
 
 import java.sql.*;
@@ -105,5 +106,12 @@ public class DriverDatabaseAccess {
         }
         return id;
     }
-
+public void changeDriverStatusToOnTrip(int id){
+    try {
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(String.format("UPDATE taxi.driver SET driver_status='%s' where id='%s'", DriverStatus.ON_TRIP.getDriverStatus(),id));
+    } catch (SQLException throwables) {
+        throwables.printStackTrace();
+    }
+}
 }

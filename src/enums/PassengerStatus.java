@@ -1,9 +1,8 @@
 package enums;
 
 public enum PassengerStatus {
-    NOT_BOARD("not_board"),
-    ON_TRIP("on_trip"),
-    ARRIVED("arrived");
+    FREE("FREE"),
+    ON_TRIP("ON_TRIP");
     private String passengerStatus;
 
     PassengerStatus(String passengerStatus) {

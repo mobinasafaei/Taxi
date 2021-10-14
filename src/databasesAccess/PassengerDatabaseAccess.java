@@ -1,5 +1,6 @@
 package databasesAccess;
 
+import enums.PassengerStatus;
 import model.Passenger;
 
 import java.sql.*;
@@ -24,9 +25,9 @@ public class PassengerDatabaseAccess {
         if (!checkPassenger(passenger.getUserName())) {
             try {
                 Statement statement = connection.createStatement();
-                statement.executeUpdate(String.format("INSERT INTO taxi.passenger (id,user_name, first_name, last_name, address,balance) " +
-                                "VALUES (null,'%s' ,'%s', '%s', '%s','%s');"
-                        , passenger.getUserName(), passenger.getFirstName(), passenger.getLastName(), passenger.getAddress(), 0));
+                statement.executeUpdate(String.format("INSERT INTO taxi.passenger (id,user_name, first_name, last_name, address,balance,passenger_status) " +
+                                "VALUES (null,'%s' ,'%s', '%s', '%s','%s','%s');"
+                        , passenger.getUserName(), passenger.getFirstName(), passenger.getLastName(), passenger.getAddress(), 0, PassengerStatus.FREE.getPassengerStatus()));
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -66,6 +67,20 @@ public class PassengerDatabaseAccess {
         }
     }
 
+    public int getPassengerIdByUsername(String username) {
+        int id = -1;
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(String.format("SELECT * from taxi.passenger where user_name='%s'", username));
+            while (resultSet.next()) {
+                id = resultSet.getInt("id");
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return id;
+    }
+
     public void increaseBalance(String userName, double increaseBalance) {
         try {
             Statement statement = connection.createStatement();
@@ -77,9 +92,46 @@ public class PassengerDatabaseAccess {
                 }
             }
             statement.executeUpdate(String.format("UPDATE taxi.passenger SET balance = '%s' WHERE (user_name = '%s')", newBalance, userName));
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    public boolean checkPassengerStatus(String username) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(String.format("SELECT passenger_status from taxi.passenger where user_name='%s'", username));
+            while (resultSet.next()) {
+                if (resultSet.getString("passenger_status").equals(PassengerStatus.FREE.getPassengerStatus())) {
+                    return true;
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
+    public void changePassengerStatusToOnTrip(String username) {
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(String.format("UPDATE taxi.passenger SET passenger_status='%s' where user_name='%s'", PassengerStatus.ON_TRIP.getPassengerStatus(), username));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public double getBBalanceByUsername(String username) {
+      double balance=0;
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(String.format("select balance from taxi.passenger where user_name='%s'", username));
+        while (resultSet.next()){
+            balance=resultSet.getDouble("balance");
+        }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return balance;
     }
 }

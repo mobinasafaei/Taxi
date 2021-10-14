@@ -3,6 +3,7 @@ package model;
 public class Trip {
     private String origin;
     private String destination;
+    private String tripStatus;
     private Double cost;
 
     public String getOrigin() {
@@ -19,6 +20,14 @@ public class Trip {
 
     public void setDestination(String destination) {
         this.destination = destination;
+    }
+
+    public String getTripStatus() {
+        return tripStatus;
+    }
+
+    public void setTripStatus(String tripStatus) {
+        this.tripStatus = tripStatus;
     }
 
     public void calculateCost() {
