@@ -81,16 +81,9 @@ public class PassengerDatabaseAccess {
         return id;
     }
 
-    public void increaseBalance(String userName, double increaseBalance) {
+    public void setNewBalance(String userName, double newBalance) {
         try {
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * from taxi.passenger");
-            double newBalance = 0;
-            while (resultSet.next()) {
-                if (userName.equals(resultSet.getString("user_name"))) {
-                    newBalance = resultSet.getDouble("balance") + increaseBalance;
-                }
-            }
             statement.executeUpdate(String.format("UPDATE taxi.passenger SET balance = '%s' WHERE (user_name = '%s')", newBalance, userName));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -122,16 +115,37 @@ public class PassengerDatabaseAccess {
     }
 
     public double getBBalanceByUsername(String username) {
-      double balance=0;
+        double balance = 0;
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(String.format("select balance from taxi.passenger where user_name='%s'", username));
-        while (resultSet.next()){
-            balance=resultSet.getDouble("balance");
-        }
+            while (resultSet.next()) {
+                balance = resultSet.getDouble("balance");
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return balance;
+    }
+
+    public String getPassengerUsernameById(int id) {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(String.format("select user_name from taxi.passenger where id='%s'", id));
+            while (resultSet.next()) {
+                return resultSet.getString("user_name");
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return null;
+    }
+    public void changePassengerStatusToFree(String username) {
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(String.format("UPDATE taxi.passenger SET passenger_status='%s' where user_name='%s'", PassengerStatus.FREE.getPassengerStatus(), username));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

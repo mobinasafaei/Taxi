@@ -4,6 +4,7 @@ public class Trip {
     private String origin;
     private String destination;
     private String tripStatus;
+    private String paymentStatus;
     private Double cost;
 
     public String getOrigin() {
@@ -28,6 +29,14 @@ public class Trip {
 
     public void setTripStatus(String tripStatus) {
         this.tripStatus = tripStatus;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
     public void calculateCost() {

@@ -79,19 +79,20 @@ public class DriverDatabaseAccess {
     }
 
     public ArrayList<String> getDriverLocations() {
-        ArrayList<String> locations=new ArrayList<>();
+        ArrayList<String> locations = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("select * from taxi.driver where driver_status='WAIT_FOR_TRIP'");
             while (resultSet.next()) {
-               locations.add(resultSet.getString("location"));
+                locations.add(resultSet.getString("location"));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return locations;
     }
-    public int findDriverByLocation(String location){
+
+    public int findDriverByLocation(String location) {
         int id = 0;
         try {
             Statement statement = connection.createStatement();
@@ -99,19 +100,38 @@ public class DriverDatabaseAccess {
             while (resultSet.next()) {
                 id = resultSet.getInt("id");
                 System.out.println("your request accept with:");
-                System.out.println(resultSet.getString("last_name")+"\t"+resultSet.getString("user_name"));
+                System.out.println(resultSet.getString("last_name") + "\t" + resultSet.getString("user_name"));
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return id;
     }
-public void changeDriverStatusToOnTrip(int id){
-    try {
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(String.format("UPDATE taxi.driver SET driver_status='%s' where id='%s'", DriverStatus.ON_TRIP.getDriverStatus(),id));
-    } catch (SQLException throwables) {
-        throwables.printStackTrace();
+
+    public void changeDriverStatusToOnTrip(int id) {
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(String.format("UPDATE taxi.driver SET driver_status='%s' where id='%s'", DriverStatus.ON_TRIP.getDriverStatus(), id));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
-}
+
+    public void changeDriverLocation(String location,int driverId) {
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(String.format("UPDATE taxi.driver SET location='%s' where id='%s'", location, driverId));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    public void changeDriverStatusToWaitForTrip(int id) {
+        try {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(String.format("UPDATE taxi.driver SET driver_status='%s' where id='%s'", DriverStatus.WAIT_FOR_TRIP.getDriverStatus(), id));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 }
