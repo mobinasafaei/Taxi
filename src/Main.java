@@ -179,7 +179,7 @@ public class Main {
                                     double increaseBalance = scanner.nextDouble();
                                     double balance = passengerDatabaseAccess.getBBalanceByUsername(userName);
                                     double newBalance = increaseBalance + balance;
-                                    passengerDatabaseAccess.setNewBalance(userName, increaseBalance);
+                                    passengerDatabaseAccess.setNewBalance(userName, newBalance);
                                     System.out.println("your balance increased");
                                     showMainMeu();
                                     choose = scanner.nextInt();
@@ -233,7 +233,7 @@ public class Main {
                                     System.out.println("how much balance you wanna increase?");
                                     double increaseBalance = scanner.nextDouble();
                                     double newBalance = increaseBalance + balance;
-                                    passengerDatabaseAccess.setNewBalance(userName, increaseBalance);
+                                    passengerDatabaseAccess.setNewBalance(userName,newBalance);
                                     System.out.println("your balance increased");
                                     showMainMeu();
                                     choose = scanner.nextInt();
@@ -255,7 +255,7 @@ public class Main {
                             double increaseBalance = scanner.nextDouble();
                             double balance = passengerDatabaseAccess.getBBalanceByUsername(userName);
                             double newBalance = increaseBalance + balance;
-                            passengerDatabaseAccess.setNewBalance(userName, increaseBalance);
+                            passengerDatabaseAccess.setNewBalance(userName,newBalance);
                             System.out.println("your balance increased");
                             showMainMeu();
                             choose = scanner.nextInt();
